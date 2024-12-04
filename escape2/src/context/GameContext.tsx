@@ -70,8 +70,14 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         };
       }
 
+      // Add debug logging
+      console.log('Moving to room:', nextRoomId);
+      console.log('Room is dark:', nextRoom?.isDark);
+      console.log('Has light source:', state.inventory.some(item => item.id === 'repairedLantern'));
+      console.log('Inventory:', state.inventory.map(item => item.id));
+
       // Check if room is dark and we need a light source
-      if (nextRoom.isDark && !state.lightSource) {
+      if (nextRoom?.isDark && !state.inventory.some(item => item.id === 'repairedLantern')) {
         return {
           ...state,
           currentMessage: "It's too dark to enter without a light source.",
@@ -379,110 +385,27 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       const { puzzleId, solution } = action.payload;
       const puzzle = puzzles[puzzleId];
       
-      if (!puzzle) {
+      if (!puzzle) return state;
+      
+      // Check if solution matches
+      const isCorrect = JSON.stringify(puzzle.solution) === JSON.stringify(solution);
+      
+      if (isCorrect) {
+        // Get the reward item from items collection if it exists
+        const rewardItem = puzzle.reward ? items[puzzle.reward] : null;
+        
         return {
           ...state,
-          currentMessage: 'Error: Puzzle not found.',
-          messageHistory: [
-            ...state.messageHistory,
-            'Error: Puzzle not found',
-          ].slice(-5),
+          solvedPuzzles: [...state.solvedPuzzles, puzzleId],
+          inventory: rewardItem ? [...state.inventory, rewardItem] : state.inventory,
+          currentMessage: puzzle.successMessage
         };
-      }
-
-      // Check if puzzle is already solved
-      if (state.solvedPuzzles.includes(puzzleId)) {
+      } else {
         return {
           ...state,
-          currentMessage: 'This puzzle has already been solved.',
-          messageHistory: [
-            ...state.messageHistory,
-            'Puzzle already solved',
-          ].slice(-5),
+          currentMessage: puzzle.failureMessage
         };
       }
-
-      // Check if player has required items
-      const hasRequiredItems = puzzle.requiredItems.every(itemId =>
-        state.inventory.some(item => item.id === itemId)
-      );
-
-      if (!hasRequiredItems) {
-        return {
-          ...state,
-          currentMessage: 'You\'re missing some required items for this puzzle.',
-          messageHistory: [
-            ...state.messageHistory,
-            'Missing required items for puzzle',
-          ].slice(-5),
-        };
-      }
-
-      // Check if solution is correct
-      const isCorrect = JSON.stringify(solution) === JSON.stringify(puzzle.solution);
-
-      if (!isCorrect) {
-        return {
-          ...state,
-          currentMessage: puzzle.failureMessage,
-          messageHistory: [
-            ...state.messageHistory,
-            'Puzzle attempt failed',
-          ].slice(-5),
-        };
-      }
-
-      // Get current room state
-      const currentRoomState = state.roomStates[state.currentRoom.id] || {
-        items: [...state.currentRoom.items],
-        discoveredSecrets: [],
-        solvedPuzzles: []
-      };
-
-      // Handle puzzle completion
-      const updatedState = {
-        ...state,
-        activePuzzle: null, // Clear active puzzle
-        solvedPuzzles: [...state.solvedPuzzles, puzzleId],
-        currentMessage: puzzle.successMessage,
-        messageHistory: [
-          ...state.messageHistory,
-          puzzle.successMessage,
-        ].slice(-5),
-        roomStates: {
-          ...state.roomStates,
-          [state.currentRoom.id]: {
-            ...currentRoomState,
-            solvedPuzzles: [...currentRoomState.solvedPuzzles, puzzleId]
-          }
-        }
-      };
-
-      // Add reward item to the room if specified
-      if (puzzle.reward && items[puzzle.reward]) {
-        const rewardItem = items[puzzle.reward];
-        updatedState.roomStates[state.currentRoom.id].items = [
-          ...updatedState.roomStates[state.currentRoom.id].items,
-          rewardItem
-        ];
-        updatedState.currentRoom = {
-          ...updatedState.currentRoom,
-          items: [...updatedState.currentRoom.items, rewardItem]
-        };
-      }
-
-      // Special handling for bookshelf puzzle - reveal hidden exit
-      if (puzzleId === 'bookshelfPuzzle') {
-        updatedState.currentRoom = {
-          ...updatedState.currentRoom,
-          exits: {
-            ...updatedState.currentRoom.exits,
-            ...(updatedState.currentRoom.hiddenExits || {})
-          }
-        };
-      }
-
-      return updatedState;
     }
 
     case 'START_PUZZLE': {

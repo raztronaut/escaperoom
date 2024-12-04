@@ -9,25 +9,35 @@ export function ClientPuzzleWrapper() {
   const { state, actions } = useGame();
   const { currentRoom, activePuzzle } = state;
 
-  // Only show in library
-  if (currentRoom?.id !== 'library') {
+  // Only show in rooms with puzzles
+  if (!currentRoom?.puzzles?.length) {
     return null;
   }
 
-  // Check for colored books in inventory or room
-  const hasColoredBooks = currentRoom.items.some(item => item?.id === 'coloredBooks') ||
-                         state.inventory.some(item => item?.id === 'coloredBooks');
+  const roomPuzzleId = currentRoom.puzzles[0];
+  const currentPuzzle = puzzles[roomPuzzleId];
+  
+  if (!currentPuzzle) return null;
 
-  if (!hasColoredBooks) {
-    return null;
-  }
+  // Check for required items in room or inventory based on the puzzle
+  const hasRequiredItems = currentPuzzle.requiredItems.every(itemId =>
+    state.inventory.some(item => item?.id === itemId)
+  );
+
+  // Add debug logging after variables are defined
+  console.log('Current room:', currentRoom);
+  console.log('Inventory:', state.inventory.map(item => item.id));
+  console.log('Required items:', currentPuzzle.requiredItems);
+  console.log('Has required items:', hasRequiredItems);
 
   // If puzzle is active, show the puzzle controls
-  if (activePuzzle === 'bookshelfPuzzle') {
+  if (activePuzzle === roomPuzzleId) {
     return (
       <div className="h-full bg-slate-800/40 backdrop-blur-sm rounded-lg border border-slate-700/50 shadow-xl overflow-auto">
         <div className="flex items-center justify-between p-4 border-b border-slate-700/50">
-          <h3 className="text-lg font-medium text-slate-200">Bookshelf Puzzle</h3>
+          <h3 className="text-lg font-medium text-slate-200">
+            {roomPuzzleId === 'mirrorPuzzle' ? 'Mirror Puzzle' : 'Bookshelf Puzzle'}
+          </h3>
           <Button
             variant="ghost"
             size="sm"
@@ -41,12 +51,6 @@ export function ClientPuzzleWrapper() {
     );
   }
 
-  // Check if player has required items for the puzzle
-  const bookshelfPuzzle = puzzles.bookshelfPuzzle;
-  const hasRequiredItems = bookshelfPuzzle.requiredItems.every(itemId =>
-    state.inventory.some(item => item?.id === itemId)
-  );
-
   // Show puzzle start interface
   return (
     <div className="h-full bg-slate-800/40 backdrop-blur-sm rounded-lg border border-slate-700/50 shadow-xl p-4">
@@ -55,11 +59,13 @@ export function ClientPuzzleWrapper() {
         <div className="space-y-2">
           <div className="flex items-center justify-between bg-slate-900/50 rounded-lg p-3 border border-slate-700/50">
             <div className="space-y-1">
-              <div className="text-sm font-medium text-slate-200">Bookshelf Puzzle</div>
+              <div className="text-sm font-medium text-slate-200">
+                {roomPuzzleId === 'mirrorPuzzle' ? 'Mirror Puzzle' : 'Bookshelf Puzzle'}
+              </div>
               <div className="text-xs text-slate-400">
                 {hasRequiredItems 
-                  ? "Arrange the colored books according to the pattern in the journal"
-                  : "You need to find the journal with the pattern first"}
+                  ? currentPuzzle.hint
+                  : `Required items: ${currentPuzzle.requiredItems.join(', ')}`}
               </div>
             </div>
             <Button
@@ -67,10 +73,10 @@ export function ClientPuzzleWrapper() {
               size="sm"
               onClick={() => {
                 if (!hasRequiredItems) {
-                  actions.setMessage("You need the journal to solve this puzzle.");
+                  actions.setMessage(`You need ${currentPuzzle.requiredItems.join(' and ')} to solve this puzzle.`);
                   return;
                 }
-                actions.startPuzzle('bookshelfPuzzle');
+                actions.startPuzzle(roomPuzzleId);
               }}
               disabled={!hasRequiredItems}
             >

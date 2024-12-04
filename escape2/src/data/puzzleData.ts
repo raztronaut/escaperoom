@@ -24,11 +24,11 @@ export const puzzles: { [key: string]: Puzzle } = {
   mirrorPuzzle: {
     id: 'mirrorPuzzle',
     isSolved: false,
-    requiredItems: ['mirror', 'lantern'],
-    solution: ['reflect', 'illuminate', 'observe'],
-    hint: 'Use the mirror to reflect light from your lantern onto the maze walls. The reflections will reveal the true path.',
-    failureMessage: 'The reflections swirl but remain unclear.',
-    successMessage: 'The mirror reveals the true path through the maze! You can now see the way forward.',
+    requiredItems: ['repairedLantern', 'mirror'],
+    solution: ['1', '2', '4', '3'],
+    hint: 'The ancient mirrors must be activated in a specific sequence. Watch how the light reflects between them.',
+    failureMessage: 'The mirrors shimmer briefly but return to darkness.',
+    successMessage: 'The mirrors align perfectly, creating a dazzling display of light that reveals a hidden mechanism!',
     reward: 'mazeKey'
   },
   secretRoomPuzzle: {
@@ -46,7 +46,7 @@ export const puzzles: { [key: string]: Puzzle } = {
 export const itemCombinations: ItemCombination[] = [
   {
     itemIds: ['brokenLantern', 'oil'],
-    resultItemId: 'lantern',
+    resultItemId: 'repairedLantern',
     message: 'You repair and fill the lantern. It now provides a steady light!'
   },
   {

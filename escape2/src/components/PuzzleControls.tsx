@@ -8,33 +8,75 @@ import { Button } from './ui/button';
 export function PuzzleControls() {
   const { state, actions } = useGame();
   const [solution, setSolution] = useState<string[]>([]);
+  const [mirrorSolution, setMirrorSolution] = useState<string[]>([]);
 
-  // Get the active puzzle
-  const currentPuzzle = puzzles.bookshelfPuzzle;
+  // Add debug logging
+  console.log('Current room:', state.currentRoom);
+  console.log('Room puzzles:', state.currentRoom.puzzles);
+
+  // Check if current room has any puzzles
+  if (!state.currentRoom.puzzles?.length) return null;
+
+  // Get the active puzzle based on the room's puzzle list
+  const roomPuzzleId = state.currentRoom.puzzles[0]; // For now, handle first puzzle in room
+  const currentPuzzle = puzzles[roomPuzzleId];
+  const isMirrorRoom = roomPuzzleId === 'mirrorPuzzle';
+
+  if (!currentPuzzle) return null;
 
   // Check if puzzle is already solved
-  if (state.solvedPuzzles.includes('bookshelfPuzzle')) {
-    return null;
-  }
+  const isPuzzleSolved = state.solvedPuzzles.includes(currentPuzzle.id);
+  if (isPuzzleSolved) return null;
 
-  const handleSolutionStep = (step: string) => {
-    setSolution([...solution, step]);
+  // Check if player has required items
+  const hasRequiredItems = currentPuzzle.requiredItems.every(itemId =>
+    state.inventory.some(item => item.id === itemId)
+  );
+
+  const handleSolutionStep = (step: string | number) => {
+    if (!hasRequiredItems) return;
+    if (isMirrorRoom) {
+      setMirrorSolution([...mirrorSolution, step.toString()]);
+    } else {
+      setSolution([...solution, step as string]);
+    }
   };
 
   const handleAttemptSolve = () => {
-    actions.attemptPuzzle('bookshelfPuzzle', solution);
-    setSolution([]);
+    if (!hasRequiredItems) return;
+    const currentSolution = isMirrorRoom ? mirrorSolution : solution;
+    actions.attemptPuzzle(currentPuzzle.id, currentSolution);
+    if (isMirrorRoom) {
+      setMirrorSolution([]);
+    } else {
+      setSolution([]);
+    }
   };
 
   const handleReset = () => {
-    setSolution([]);
+    if (isMirrorRoom) {
+      setMirrorSolution([]);
+    } else {
+      setSolution([]);
+    }
   };
+
+  const currentSolution = isMirrorRoom ? mirrorSolution : solution;
+  const maxSteps = currentPuzzle.solution.length;
 
   return (
     <div className="p-4">
       <div className="space-y-4">
         <div className="p-3 bg-slate-900/30 rounded-lg border border-slate-700/30">
-          <p className="text-sm text-slate-300">{currentPuzzle.hint}</p>
+          <p className="text-sm text-slate-300">
+            {!hasRequiredItems ? (
+              <span className="text-amber-500">
+                Required items: {currentPuzzle.requiredItems.join(', ')}
+              </span>
+            ) : (
+              currentPuzzle.hint
+            )}
+          </p>
         </div>
         
         <div className="flex flex-wrap gap-2 justify-center">
@@ -42,56 +84,59 @@ export function PuzzleControls() {
             <div
               key={index}
               className={`w-10 h-10 rounded-lg border-2 ${
-                solution[index]
+                currentSolution[index]
                   ? 'bg-slate-700/50 border-amber-500/50'
                   : 'bg-slate-800/50 border-slate-700'
               } flex items-center justify-center text-sm font-medium`}
             >
-              {solution[index] ? '✓' : (index + 1)}
+              {currentSolution[index] ? '✓' : (index + 1)}
             </div>
           ))}
         </div>
 
         <div className="grid grid-cols-2 gap-2">
-          <Button
-            variant="secondary"
-            onClick={() => handleSolutionStep('red')}
-            disabled={solution.length >= currentPuzzle.solution.length}
-            className="bg-red-900/30 hover:bg-red-900/50 border-red-900/50"
-          >
-            Red Book
-          </Button>
-          <Button
-            variant="secondary"
-            onClick={() => handleSolutionStep('blue')}
-            disabled={solution.length >= currentPuzzle.solution.length}
-            className="bg-blue-900/30 hover:bg-blue-900/50 border-blue-900/50"
-          >
-            Blue Book
-          </Button>
-          <Button
-            variant="secondary"
-            onClick={() => handleSolutionStep('green')}
-            disabled={solution.length >= currentPuzzle.solution.length}
-            className="bg-green-900/30 hover:bg-green-900/50 border-green-900/50"
-          >
-            Green Book
-          </Button>
-          <Button
-            variant="secondary"
-            onClick={() => handleSolutionStep('yellow')}
-            disabled={solution.length >= currentPuzzle.solution.length}
-            className="bg-yellow-900/30 hover:bg-yellow-900/50 border-yellow-900/50"
-          >
-            Yellow Book
-          </Button>
+          {isMirrorRoom ? (
+            // Mirror puzzle controls
+            <>
+              {[1, 2, 3, 4].map((mirrorId) => (
+                <Button
+                  key={mirrorId}
+                  variant="secondary"
+                  onClick={() => handleSolutionStep(mirrorId)}
+                  disabled={!hasRequiredItems || mirrorSolution.length >= maxSteps}
+                  className={`bg-amber-900/30 hover:bg-amber-900/50 border-amber-900/50 ${
+                    !hasRequiredItems && 'opacity-50'
+                  }`}
+                >
+                  Mirror {mirrorId}
+                </Button>
+              ))}
+            </>
+          ) : (
+            // Bookshelf puzzle controls
+            <>
+              {['red', 'blue', 'green', 'yellow'].map((color) => (
+                <Button
+                  key={color}
+                  variant="secondary"
+                  onClick={() => handleSolutionStep(color)}
+                  disabled={!hasRequiredItems || solution.length >= maxSteps}
+                  className={`bg-${color}-900/30 hover:bg-${color}-900/50 border-${color}-900/50 ${
+                    !hasRequiredItems && 'opacity-50'
+                  }`}
+                >
+                  {color.charAt(0).toUpperCase() + color.slice(1)} Book
+                </Button>
+              ))}
+            </>
+          )}
         </div>
 
         <div className="flex gap-2 pt-2">
           <Button
             variant="default"
             onClick={handleAttemptSolve}
-            disabled={solution.length !== currentPuzzle.solution.length}
+            disabled={!hasRequiredItems || currentSolution.length !== maxSteps}
             className="flex-1"
           >
             Attempt Solution
@@ -99,7 +144,7 @@ export function PuzzleControls() {
           <Button
             variant="secondary"
             onClick={handleReset}
-            disabled={solution.length === 0}
+            disabled={currentSolution.length === 0}
           >
             Reset
           </Button>

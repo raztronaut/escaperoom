@@ -36,8 +36,8 @@ export const items: { [key: string]: Item } = {
     icon: '🛢️',
     category: 'ingredient'
   },
-  lantern: {
-    id: 'lantern',
+  repairedLantern: {
+    id: 'repairedLantern',
     name: 'Repaired Lantern',
     description: 'A working oil lantern that provides steady light.',
     canPickup: true,
@@ -240,6 +240,19 @@ export const items: { [key: string]: Item } = {
     category: 'puzzle',
     energyCost: 5,
     sanityEffect: -10
+  },
+  mazeKey: {
+    id: 'mazeKey',
+    name: 'Maze Key',
+    description: 'An ornate key with mirror-like surfaces that seems to bend light around it.',
+    canPickup: true,
+    isUsable: true,
+    examineResult: 'The key\'s surface reflects impossible angles, similar to the mirror maze itself.',
+    interactions: ['The key feels cold and seems to vibrate slightly when pointed toward certain directions.'],
+    icon: '🗝️',
+    category: 'key',
+    energyCost: 5,
+    sanityEffect: -5
   }
 };
 
@@ -323,8 +336,8 @@ export const rooms: { [key: string]: Room } = {
       west: 'greenhouse',
       north: 'secretRoom'
     },
-    requiredItems: ['lantern'],
     puzzles: ['mirrorPuzzle'],
+    requiredItems: ['repairedLantern'],
     ambientMessages: [
       'Your reflections move independently in the mirrors.',
       'The maze layout seems to shift when you blink.',
