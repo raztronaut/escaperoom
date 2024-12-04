@@ -58,9 +58,7 @@ export function ClientPuzzleWrapper({ puzzleId }: { puzzleId: PuzzleId }) {
                 {getPuzzleTitle(roomPuzzleId)}
               </div>
               <div className="text-xs text-slate-400">
-                {hasRequiredItems 
-                  ? currentPuzzle.hint
-                  : `Required items: ${currentPuzzle.requiredItems.join(', ')}`}
+                {currentPuzzle.hint}
               </div>
             </div>
             <Button

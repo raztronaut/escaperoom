@@ -338,39 +338,6 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       };
     }
 
-    case 'SEARCH': {
-      const hiddenItems = state.currentRoom.items.filter(i => i.isHidden);
-      if (hiddenItems.length === 0) {
-        return {
-          ...state,
-          lastAction: 'Searched room',
-          currentMessage: 'You found nothing of interest.',
-          messageHistory: [
-            ...state.messageHistory,
-            'Searched room but found nothing',
-          ].slice(-5),
-        };
-      }
-
-      const updatedItems = state.currentRoom.items.map(item => 
-        item.isHidden ? { ...item, isHidden: false } : item
-      );
-
-      return {
-        ...state,
-        currentRoom: {
-          ...state.currentRoom,
-          items: updatedItems,
-        },
-        lastAction: 'Searched room',
-        currentMessage: `You found: ${hiddenItems.map(i => i.name).join(', ')}`,
-        messageHistory: [
-          ...state.messageHistory,
-          `Found hidden items: ${hiddenItems.map(i => i.name).join(', ')}`,
-        ].slice(-5),
-      };
-    }
-
     case 'SET_MESSAGE':
       return {
         ...state,
@@ -489,7 +456,6 @@ interface GameContextType {
     selectItem: (item: Item) => void;
     clearSelectedItem: () => void;
     combineItems: (item1: string, item2: string) => void;
-    searchRoom: () => void;
     attemptPuzzle: (puzzleId: string, solution: string[]) => void;
     setMessage: (message: string) => void;
     startPuzzle: (puzzleId: string) => void;
@@ -511,7 +477,6 @@ export function GameProvider({ children }: { children: ReactNode }) {
     clearSelectedItem: () => dispatch({ type: 'CLEAR_SELECTED_ITEM' }),
     combineItems: (item1: string, item2: string) => 
       dispatch({ type: 'COMBINE', payload: { item1, item2 } }),
-    searchRoom: () => dispatch({ type: 'SEARCH' }),
     attemptPuzzle: (puzzleId: string, solution: string[]) => {
       dispatch({ type: 'SOLVE_PUZZLE', payload: { puzzleId, solution } });
     },

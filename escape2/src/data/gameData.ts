@@ -189,18 +189,6 @@ export const items: { [key: string]: Item } = {
     energyCost: 5,
     sanityEffect: 25
   },
-  coloredBooks: {
-    id: 'coloredBooks',
-    name: 'Colored Books',
-    description: 'A set of books with distinctly colored spines: red, blue, green, and yellow.',
-    canPickup: true,
-    isUsable: true,
-    examineResult: 'The books seem to be arranged in a specific order. Maybe they can be rearranged?',
-    interactions: ['The colored spines seem to glow faintly.'],
-    icon: '📚',
-    category: 'puzzle',
-    energyCost: 5
-  },
   mirrorShard: {
     id: 'mirrorShard',
     name: 'Mirror Shard',
@@ -253,6 +241,17 @@ export const items: { [key: string]: Item } = {
     category: 'key',
     energyCost: 5,
     sanityEffect: -5
+  },
+  coloredBooks: {
+    id: 'coloredBooks',
+    name: 'Colored Books',
+    description: 'A set of books in different colors: red, blue, green, and yellow.',
+    canPickup: false,
+    isUsable: true,
+    icon: '📚',
+    category: 'puzzle',
+    examineResult: 'The books are arranged on the shelf in no particular order.',
+    interactions: ['The books can be rearranged on the shelf.']
   }
 };
 
@@ -278,7 +277,7 @@ export const rooms: { [key: string]: Room } = {
     name: 'Ancient Library',
     description: 'Towering bookshelves line the walls. The air is thick with the smell of old paper.',
     visitedDescription: 'The library\'s endless rows of books hold many secrets.',
-    items: [items.coloredBooks, items.mirrorShard],
+    items: [items.mirrorShard],
     exits: {
       south: 'study',
       east: 'secretRoom',

@@ -108,7 +108,6 @@ export type GameAction =
   | { type: 'SELECT_ITEM'; payload: Item }
   | { type: 'CLEAR_SELECTED_ITEM' }
   | { type: 'COMBINE'; payload: { item1: string; item2: string } }
-  | { type: 'SEARCH' }
   | { type: 'SOLVE_PUZZLE'; payload: { puzzleId: string; solution: string[] } }
   | { type: 'SET_MESSAGE'; payload: string }
   | { type: 'START_PUZZLE'; payload: string }

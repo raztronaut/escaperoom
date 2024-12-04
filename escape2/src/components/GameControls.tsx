@@ -232,14 +232,6 @@ export function GameControls() {
     }
   };
 
-  const handleSearchRoom = () => {
-    if (state.stats.energy < 10) {
-      actions.setMessage("You're too exhausted to search thoroughly...");
-      return;
-    }
-    actions.searchRoom();
-  };
-
   // Ensure currentRoom and its items exist
   if (!currentRoom || !Array.isArray(currentRoom.items)) {
     return null;
@@ -273,17 +265,7 @@ export function GameControls() {
 
       {/* Room Items */}
       <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <div className="text-sm font-medium text-slate-200">Items in Room</div>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-7 px-3 hover:bg-slate-800/50"
-            onClick={handleSearchRoom}
-          >
-            Search
-          </Button>
-        </div>
+        <div className="text-sm font-medium text-slate-200">Items in Room</div>
         <div className="space-y-1.5">
           {currentRoom.items.length > 0 ? (
             currentRoom.items.filter(item => item && item.id).map((item) => (
