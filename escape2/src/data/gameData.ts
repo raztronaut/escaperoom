@@ -332,8 +332,7 @@ export const rooms: { [key: string]: Room } = {
     items: [],
     exits: {
       south: 'library',
-      west: 'greenhouse',
-      north: 'secretRoom'
+      west: 'greenhouse'
     },
     puzzles: ['mirrorPuzzle'],
     requiredItems: ['repairedLantern'],
@@ -350,7 +349,7 @@ export const rooms: { [key: string]: Room } = {
     visitedDescription: 'The mysterious chamber pulses with arcane energy.',
     items: [],
     exits: {
-      south: 'maze'
+      west: 'library'
     },
     isLocked: true,
     requiredItems: ['revealingPotion', 'mazeKey'],

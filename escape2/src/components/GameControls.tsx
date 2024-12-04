@@ -190,6 +190,13 @@ export function GameControls() {
   const { state, actions } = useGame();
   const { currentRoom, inventory, selectedItem } = state;
 
+  function shouldShowExit(direction: string, roomId: string) {
+    if (currentRoom.id === 'library' && roomId === 'secretRoom') {
+      return inventory.some(item => item.id === 'mazeKey');
+    }
+    return true;
+  }
+
   const handleItemClick = (itemId: string) => {
     if (selectedItem) {
       // If we have a selected item and click it again, deselect it
@@ -246,7 +253,7 @@ export function GameControls() {
           {Object.entries(currentRoom.exits || {}).map(([direction, roomId]) => {
             if (!roomId || roomId === currentRoom.id) return null;
             const targetRoom = rooms[roomId as keyof typeof rooms];
-            if (!targetRoom) return null;
+            if (!targetRoom || !shouldShowExit(direction, roomId)) return null;
             
             return (
               <Button
