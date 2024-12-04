@@ -47,7 +47,7 @@ function ItemTooltip({ item }: { item: Item }) {
 
 function RoomItem({ item, onAction, selectedItem }: { 
   item: Item; 
-  onAction: (itemId: string, action: 'examine' | 'take' | 'use') => void;
+  onAction: (itemId: string, action: 'examine' | 'take') => void;
   selectedItem: Item | null;
 }) {
   if (!item || !item.id) return null;
@@ -100,16 +100,6 @@ function RoomItem({ item, onAction, selectedItem }: {
               Take
             </Button>
           )}
-          {item.isUsable && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-7 px-2 bg-slate-900/50 hover:bg-slate-900/70"
-              onClick={() => onAction(item.id, 'use')}
-            >
-              Use
-            </Button>
-          )}
         </div>
       </div>
     </motion.div>
@@ -118,7 +108,7 @@ function RoomItem({ item, onAction, selectedItem }: {
 
 function InventoryItem({ item, onAction, onSelect, selectedItem }: { 
   item: Item; 
-  onAction: (itemId: string, action: 'examine' | 'take' | 'use') => void;
+  onAction: (itemId: string, action: 'examine') => void;
   onSelect: (itemId: string) => void;
   selectedItem: Item | null;
 }) {
@@ -160,16 +150,6 @@ function InventoryItem({ item, onAction, onSelect, selectedItem }: {
           >
             Look
           </Button>
-          {item.isUsable && !selectedItem && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-7 px-2 bg-slate-900/50 hover:bg-slate-900/70"
-              onClick={() => onAction(item.id, 'use')}
-            >
-              Use
-            </Button>
-          )}
           {selectedItem ? (
             selectedItem.id === item.id ? (
               <Button
@@ -229,7 +209,7 @@ export function GameControls() {
     }
   };
 
-  const handleItemAction = (itemId: string, action: 'examine' | 'take' | 'use') => {
+  const handleItemAction = (itemId: string, action: 'examine' | 'take') => {
     const item = inventory.find(i => i.id === itemId) || 
                 currentRoom.items?.find(i => i.id === itemId);
     
@@ -248,9 +228,6 @@ export function GameControls() {
         break;
       case 'take':
         actions.takeItem(itemId);
-        break;
-      case 'use':
-        actions.useItem(itemId);
         break;
     }
   };
