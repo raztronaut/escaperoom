@@ -40,6 +40,16 @@ export const puzzles: { [key: string]: Puzzle } = {
     failureMessage: 'Something is still missing. The way forward remains unclear.',
     successMessage: 'As you drink the potion, ancient symbols become visible on the walls. The maze key begins to glow, and a hidden door appears!',
     reward: 'escape'
+  },
+  secretRoom: {
+    id: 'secretRoom',
+    isSolved: false,
+    requiredItems: ['revealingPotion', 'mazeKey'],
+    solution: ['useRevealingPotion', 'useMazeKey'],
+    hint: 'The chamber walls shimmer with hidden runes. Perhaps the revealing potion could show their true nature.',
+    failureMessage: 'The walls seem to hold some secret, but you cannot interact with them yet.',
+    successMessage: 'The maze key resonates with the revealed runes. The chamber recognizes you as worthy!',
+    reward: 'escape'
   }
 };
 

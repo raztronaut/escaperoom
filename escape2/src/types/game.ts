@@ -110,4 +110,6 @@ export type GameAction =
   | { type: 'SOLVE_PUZZLE'; payload: { puzzleId: string; solution: string[] } }
   | { type: 'SET_MESSAGE'; payload: string }
   | { type: 'START_PUZZLE'; payload: string }
-  | { type: 'CANCEL_PUZZLE' }; 
+  | { type: 'CANCEL_PUZZLE' };
+
+export type PuzzleId = keyof typeof puzzles; 

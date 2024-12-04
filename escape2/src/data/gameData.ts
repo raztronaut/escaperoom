@@ -361,5 +361,22 @@ export const rooms: { [key: string]: Room } = {
       'A faint humming emanates from somewhere in the room.',
       'The air feels charged with ancient magic.'
     ]
+  },
+  secretChamber: {
+    id: 'secretChamber',
+    name: 'Chamber of Secrets',
+    description: 'The mysterious chamber pulses with arcane energy.',
+    items: [],
+    exits: {
+      south: 'library'
+    },
+    isLocked: true,
+    requiredItems: ['revealingPotion', 'mazeKey'],
+    puzzles: ['secretRoom'],
+    ambientMessages: [
+      'The symbols on the walls seem to shift and change.',
+      'A faint humming emanates from somewhere in the room.',
+      'The air feels charged with ancient magic.'
+    ]
   }
 }; 

@@ -4,8 +4,10 @@ import { useGame } from '@/context/GameContext';
 import { PuzzleControls } from './PuzzleControls';
 import { Button } from './ui/button';
 import { puzzles } from '@/data/puzzleData';
+import { SecretRoomPuzzle } from './SecretRoomPuzzle';
+import { PuzzleId } from '@/types/game';
 
-export function ClientPuzzleWrapper() {
+export function ClientPuzzleWrapper({ puzzleId }: { puzzleId: PuzzleId }) {
   const { state, actions } = useGame();
   const { currentRoom, activePuzzle } = state;
 
