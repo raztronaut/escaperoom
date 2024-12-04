@@ -12,7 +12,7 @@ export default function Home() {
           {/* Header */}
           <div className="flex-none mb-4">
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-white to-slate-400 text-center">
-              Escape the Mansion
+              Escape the Mansion!
             </h1>
             <p className="mt-2 text-sm text-slate-400 text-center max-w-2xl mx-auto">
               Uncover the mysteries of this ancient mansion by exploring rooms, solving puzzles,
