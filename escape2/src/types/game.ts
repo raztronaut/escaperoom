@@ -1,3 +1,5 @@
+import { puzzles } from '@/data/puzzleData';
+
 export interface ItemCombination {
   itemIds: [string, string];
   resultItemId: string;

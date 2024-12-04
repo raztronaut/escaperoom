@@ -11,16 +11,6 @@ export const puzzles: { [key: string]: Puzzle } = {
     successMessage: 'The bookshelf slides aside, revealing a hidden passage! You notice a metal frame has been exposed.',
     reward: 'metalFrame'
   },
-  alchemyPuzzle: {
-    id: 'alchemyPuzzle',
-    isSolved: false,
-    requiredItems: ['alchemyBook'],
-    solution: ['blueEssence', 'redCrystal', 'moonflower'],
-    hint: 'According to the book, first mix blue essence with the vial, then add the red crystal, and finally the moonflower petal.',
-    failureMessage: 'The mixture fizzles and becomes inert.',
-    successMessage: 'The potion glows with an ethereal light! You\'ve created the Revealing Potion.',
-    reward: 'revealingPotion'
-  },
   mirrorPuzzle: {
     id: 'mirrorPuzzle',
     isSolved: false,
@@ -31,21 +21,11 @@ export const puzzles: { [key: string]: Puzzle } = {
     successMessage: 'The mirrors align perfectly, creating a dazzling display of light that reveals a hidden mechanism!',
     reward: 'mazeKey'
   },
-  secretRoomPuzzle: {
-    id: 'secretRoomPuzzle',
-    isSolved: false,
-    requiredItems: ['revealingPotion', 'mazeKey'],
-    solution: ['drink', 'unlock', 'enter'],
-    hint: 'The revealing potion will show you the truth, and the maze key will grant you passage.',
-    failureMessage: 'Something is still missing. The way forward remains unclear.',
-    successMessage: 'As you drink the potion, ancient symbols become visible on the walls. The maze key begins to glow, and a hidden door appears!',
-    reward: 'escape'
-  },
   secretRoom: {
     id: 'secretRoom',
     isSolved: false,
     requiredItems: ['revealingPotion', 'mazeKey'],
-    solution: ['useRevealingPotion', 'useMazeKey'],
+    solution: ['1', '2', '3', '4'],
     hint: 'The chamber walls shimmer with hidden runes. Perhaps the revealing potion could show their true nature.',
     failureMessage: 'The walls seem to hold some secret, but you cannot interact with them yet.',
     successMessage: 'The maze key resonates with the revealed runes. The chamber recognizes you as worthy!',

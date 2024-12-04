@@ -4,7 +4,6 @@ import { useGame } from '@/context/GameContext';
 import { PuzzleControls } from './PuzzleControls';
 import { Button } from './ui/button';
 import { puzzles } from '@/data/puzzleData';
-import { SecretRoomPuzzle } from './SecretRoomPuzzle';
 import { PuzzleId } from '@/types/game';
 
 export function ClientPuzzleWrapper({ puzzleId }: { puzzleId: PuzzleId }) {
@@ -26,19 +25,13 @@ export function ClientPuzzleWrapper({ puzzleId }: { puzzleId: PuzzleId }) {
     state.inventory.some(item => item?.id === itemId)
   );
 
-  // Add debug logging after variables are defined
-  console.log('Current room:', currentRoom);
-  console.log('Inventory:', state.inventory.map(item => item.id));
-  console.log('Required items:', currentPuzzle.requiredItems);
-  console.log('Has required items:', hasRequiredItems);
-
   // If puzzle is active, show the puzzle controls
   if (activePuzzle === roomPuzzleId) {
     return (
       <div className="h-full bg-slate-800/40 backdrop-blur-sm rounded-lg border border-slate-700/50 shadow-xl overflow-auto">
         <div className="flex items-center justify-between p-4 border-b border-slate-700/50">
           <h3 className="text-lg font-medium text-slate-200">
-            {roomPuzzleId === 'mirrorPuzzle' ? 'Mirror Puzzle' : 'Bookshelf Puzzle'}
+            {getPuzzleTitle(roomPuzzleId)}
           </h3>
           <Button
             variant="ghost"
@@ -62,7 +55,7 @@ export function ClientPuzzleWrapper({ puzzleId }: { puzzleId: PuzzleId }) {
           <div className="flex items-center justify-between bg-slate-900/50 rounded-lg p-3 border border-slate-700/50">
             <div className="space-y-1">
               <div className="text-sm font-medium text-slate-200">
-                {roomPuzzleId === 'mirrorPuzzle' ? 'Mirror Puzzle' : 'Bookshelf Puzzle'}
+                {getPuzzleTitle(roomPuzzleId)}
               </div>
               <div className="text-xs text-slate-400">
                 {hasRequiredItems 
@@ -89,4 +82,19 @@ export function ClientPuzzleWrapper({ puzzleId }: { puzzleId: PuzzleId }) {
       </div>
     </div>
   );
+}
+
+function getPuzzleTitle(puzzleId: string): string {
+  switch (puzzleId) {
+    case 'mirrorPuzzle':
+      return 'Mirror Puzzle';
+    case 'bookshelfPuzzle':
+      return 'Bookshelf Puzzle';
+    case 'alchemyPuzzle':
+      return 'Alchemy Puzzle';
+    case 'secretRoom':
+      return 'Chamber of Secrets Puzzle';
+    default:
+      return 'Unknown Puzzle';
+  }
 } 

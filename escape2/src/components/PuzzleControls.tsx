@@ -21,6 +21,7 @@ export function PuzzleControls() {
   const roomPuzzleId = state.currentRoom.puzzles[0]; // For now, handle first puzzle in room
   const currentPuzzle = puzzles[roomPuzzleId];
   const isMirrorRoom = roomPuzzleId === 'mirrorPuzzle';
+  const isSecretRoom = roomPuzzleId === 'secretRoom';
 
   if (!currentPuzzle) return null;
 
@@ -35,7 +36,7 @@ export function PuzzleControls() {
 
   const handleSolutionStep = (step: string | number) => {
     if (!hasRequiredItems) return;
-    if (isMirrorRoom) {
+    if (isMirrorRoom || isSecretRoom) {
       setMirrorSolution([...mirrorSolution, step.toString()]);
     } else {
       setSolution([...solution, step as string]);
@@ -44,9 +45,9 @@ export function PuzzleControls() {
 
   const handleAttemptSolve = () => {
     if (!hasRequiredItems) return;
-    const currentSolution = isMirrorRoom ? mirrorSolution : solution;
+    const currentSolution = isMirrorRoom || isSecretRoom ? mirrorSolution : solution;
     actions.attemptPuzzle(currentPuzzle.id, currentSolution);
-    if (isMirrorRoom) {
+    if (isMirrorRoom || isSecretRoom) {
       setMirrorSolution([]);
     } else {
       setSolution([]);
@@ -54,14 +55,14 @@ export function PuzzleControls() {
   };
 
   const handleReset = () => {
-    if (isMirrorRoom) {
+    if (isMirrorRoom || isSecretRoom) {
       setMirrorSolution([]);
     } else {
       setSolution([]);
     }
   };
 
-  const currentSolution = isMirrorRoom ? mirrorSolution : solution;
+  const currentSolution = isMirrorRoom || isSecretRoom ? mirrorSolution : solution;
   const maxSteps = currentPuzzle.solution.length;
 
   return (
@@ -95,7 +96,22 @@ export function PuzzleControls() {
         </div>
 
         <div className="grid grid-cols-2 gap-2">
-          {isMirrorRoom ? (
+          {isSecretRoom ? (
+            // Secret room puzzle controls
+            <>
+              {[1, 2, 3, 4].map((step) => (
+                <Button
+                  key={step}
+                  variant="secondary"
+                  onClick={() => handleSolutionStep(step.toString())}
+                  disabled={!hasRequiredItems || solution.length >= maxSteps}
+                  className="bg-indigo-900/30 hover:bg-indigo-900/50 border-indigo-900/50"
+                >
+                  Step {step}
+                </Button>
+              ))}
+            </>
+          ) : isMirrorRoom ? (
             // Mirror puzzle controls
             <>
               {[1, 2, 3, 4].map((mirrorId) => (
