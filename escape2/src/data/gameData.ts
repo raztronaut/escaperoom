@@ -227,6 +227,19 @@ export const items: { [key: string]: Item } = {
     icon: '⚜️',
     category: 'puzzle',
     energyCost: 5
+  },
+  mirror: {
+    id: 'mirror',
+    name: 'Mystical Mirror',
+    description: 'A restored mirror that shows strange reflections.',
+    canPickup: true,
+    isUsable: true,
+    examineResult: 'The mirror shows impossible reflections and seems to pulse with magical energy.',
+    interactions: ['The mirror surface ripples like water when touched.'],
+    icon: '🪞',
+    category: 'puzzle',
+    energyCost: 5,
+    sanityEffect: -10
   }
 };
 
