@@ -3,6 +3,10 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
+interface PageProps {
+  searchParams: { [key: string]: string | undefined }
+}
+
 interface GameResult {
   profiles: {
     username: string
@@ -11,11 +15,7 @@ interface GameResult {
   completed_at: string
 }
 
-export default async function VictoryPage({
-  searchParams
-}: {
-  searchParams: { time?: string }
-}) {
+export default async function VictoryPage({ searchParams }: PageProps) {
   const supabase = createServerComponentClient({ cookies })
   const { data: { session } } = await supabase.auth.getSession()
 
@@ -23,18 +23,29 @@ export default async function VictoryPage({
     redirect('/login')
   }
 
-  // Fetch top 10 fastest completions
-  const { data: leaderboard } = await supabase
+  // Now try the joined query with user_id instead of profiles
+  const { data: leaderboard, error: leaderboardError } = await supabase
     .from('game_results')
     .select(`
       time_taken,
       completed_at,
-      profiles (
-        username
-      )
+      user_id
     `)
     .order('time_taken', { ascending: true })
     .limit(10)
+
+  // Fetch usernames separately
+  const userIds = leaderboard?.map(result => result.user_id) || []
+  const { data: profiles } = await supabase
+    .from('profiles')
+    .select('id, username')
+    .in('id', userIds)
+
+  // Combine the data
+  const leaderboardWithUsernames = leaderboard?.map(result => ({
+    ...result,
+    username: profiles?.find(p => p.id === result.user_id)?.username || 'Unknown Player'
+  }))
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60)
@@ -49,28 +60,28 @@ export default async function VictoryPage({
           Congratulations!
         </h1>
         
-        {searchParams.time && (
+        {searchParams?.time && (
           <p className="text-2xl text-slate-300 mb-8">
-            You completed the game in {formatTime(parseInt(searchParams.time))}!
+            You completed the game in {formatTime(Number(searchParams.time))}!
           </p>
         )}
 
         <div className="bg-slate-800/40 backdrop-blur-sm rounded-lg border border-slate-700/50 shadow-xl p-6 mb-8 w-full max-w-2xl">
           <h2 className="text-2xl font-bold mb-4">Leaderboard</h2>
           <div className="space-y-2">
-            {leaderboard?.map((result: GameResult, index: number) => (
+            {leaderboardWithUsernames?.map((result, index) => (
               <div 
                 key={index} 
                 className="flex justify-between items-center p-2 rounded bg-slate-700/20"
               >
                 <span className="flex items-center gap-2">
                   <span className="text-slate-400">{index + 1}.</span>
-                  <span>{result.profiles.username}</span>
+                  <span>{result.username}</span>
                 </span>
                 <span className="font-mono">{formatTime(result.time_taken)}</span>
               </div>
             ))}
-            {!leaderboard?.length && (
+            {!leaderboardWithUsernames?.length && (
               <p className="text-slate-400 text-center py-4">
                 No completions yet. You're the first!
               </p>
