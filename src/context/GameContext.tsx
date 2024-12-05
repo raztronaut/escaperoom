@@ -4,6 +4,8 @@ import { createContext, useContext, useReducer, ReactNode } from 'react';
 import { GameState, GameAction, Room, Item, ItemCombination } from '@/types/game';
 import { rooms, items } from '@/data/gameData';
 import { itemCombinations, puzzles } from '@/data/puzzleData';
+import { useRouter } from 'next/navigation'
+import { saveGameResult } from '@/lib/saveGameResult'
 
 interface RoomState {
   items: Item[];
@@ -460,13 +462,53 @@ interface GameContextType {
     setMessage: (message: string) => void;
     startPuzzle: (puzzleId: string) => void;
     cancelPuzzle: () => void;
+    solvePuzzle: (puzzleId: string) => void;
   };
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
 export function GameProvider({ children }: { children: ReactNode }) {
+  const router = useRouter()
   const [state, dispatch] = useReducer(gameReducer, initialState);
+
+  const handlePuzzleSolved = async (puzzleId: string) => {
+    // Mark puzzle as solved in state
+    dispatch({ type: 'SOLVE_PUZZLE', payload: { puzzleId, solution: [] } })
+
+    // If it's the secret room puzzle, complete the game
+    if (puzzleId === 'secretRoom') {
+      const startTime = localStorage.getItem('gameStartTime')
+      if (startTime) {
+        const endTime = new Date().getTime()
+        const timeTaken = Math.floor((endTime - parseInt(startTime)) / 1000)
+        
+        try {
+          // Save result to database
+          const { error } = await saveGameResult(timeTaken)
+          
+          if (error) {
+            console.error('Failed to save game result:', error)
+            dispatch({ 
+              type: 'SET_MESSAGE', 
+              payload: 'Error saving game completion. Please try again.' 
+            })
+            return
+          }
+
+          console.log('Redirecting to victory page with time:', timeTaken)
+          // Force a hard navigation instead of client-side routing
+          window.location.href = `/victory?time=${timeTaken}`
+        } catch (error) {
+          console.error('Error completing game:', error)
+          dispatch({ 
+            type: 'SET_MESSAGE', 
+            payload: 'Error completing game. Please try again.' 
+          })
+        }
+      }
+    }
+  }
 
   const actions = {
     move: (direction: string) => dispatch({ type: 'MOVE', payload: direction }),
@@ -483,6 +525,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setMessage: (message: string) => dispatch({ type: 'SET_MESSAGE', payload: message }),
     startPuzzle: (puzzleId: string) => dispatch({ type: 'START_PUZZLE', payload: puzzleId }),
     cancelPuzzle: () => dispatch({ type: 'CANCEL_PUZZLE' }),
+    solvePuzzle: handlePuzzleSolved,
   };
 
   return (

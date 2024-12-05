@@ -46,7 +46,22 @@ export function PuzzleControls() {
   const handleAttemptSolve = () => {
     if (!hasRequiredItems) return;
     const currentSolution = isMirrorRoom || isSecretRoom ? mirrorSolution : solution;
-    actions.attemptPuzzle(currentPuzzle.id, currentSolution);
+    
+    if (isSecretRoom) {
+      // Special handling for secret room puzzle completion
+      const isCorrect = JSON.stringify(currentPuzzle.solution) === JSON.stringify(currentSolution);
+      
+      if (isCorrect) {
+        actions.solvePuzzle(currentPuzzle.id);
+      } else {
+        actions.setMessage(currentPuzzle.failureMessage);
+      }
+    } else {
+      // Original logic for mirror and bookshelf puzzles
+      actions.attemptPuzzle(currentPuzzle.id, currentSolution);
+    }
+
+    // Reset solution state
     if (isMirrorRoom || isSecretRoom) {
       setMirrorSolution([]);
     } else {
