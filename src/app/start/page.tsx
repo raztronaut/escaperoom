@@ -1,8 +1,7 @@
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import StartGameButton from '@/components/StartGameButton'
-import UsernameForm from '@/components/UsernameForm'
+import StartPageContent from '@/components/StartPageContent'
 
 export default async function StartPage() {
   const supabase = createServerComponentClient({ cookies })
@@ -28,18 +27,7 @@ export default async function StartPage() {
           Escape the Mansion!
         </h1>
 
-        {hasUsername ? (
-          <>
-            <p className="text-lg text-slate-400 text-center max-w-2xl mb-12">
-              Are you ready to uncover the mysteries of this ancient mansion? Your time starts when you click the button below.
-            </p>
-            <StartGameButton />
-          </>
-        ) : (
-          <div className="w-full max-w-md">
-            <UsernameForm onComplete={() => window.location.reload()} />
-          </div>
-        )}
+        <StartPageContent initialHasUsername={hasUsername} />
       </div>
     </main>
   )
