@@ -1,43 +1,53 @@
-# Escape2
+# Escape the Mansion 🏰
 
-An interactive escape room game built with Next.js, TypeScript, and Tailwind CSS.
+An immersive browser-based escape room experience where players solve puzzles and uncover mysteries in a haunted mansion. Built with modern web technologies for optimal performance and user experience.
 
-## Technologies Used
+## ⚡ Key Features
 
-- Next.js 14 (App Router)
-- TypeScript
-- Tailwind CSS
-- Shadcn UI
-- React Context for state management
+- 🧩 Challenging puzzles that test your wit and observation skills
+- 🎮 Smooth, interactive gameplay with real-time state updates
+- 👤 Customizable character progression system
+- 🏆 Global leaderboard to compete with other players
+- 📱 Fully responsive design optimized for all devices
+- 🔒 Secure authentication and data persistence
 
-## Getting Started
+## 🛠️ Tech Stack
 
-1. Clone the repository:
+- **Framework**: Next.js 14 with App Router for optimal performance
+- **Language**: TypeScript for type-safe development
+- **Styling**: Tailwind CSS + Shadcn UI for modern, responsive design
+- **Backend**: Supabase for authentication and real-time database
+- **State Management**: React Context API for efficient state handling
+- **Performance**: Server Components and dynamic imports for fast loading
+
+## 🚀 Getting Started
+
+1. **Clone the Repository**
    ```bash
    git clone https://github.com/raztronaut/escaperoom.git
    ```
 
-2. Install dependencies:
+2. **Install Dependencies**
    ```bash
    cd escaperoom
    npm install
    ```
 
-3. Run the development server:
+3. **Set Up Environment Variables**
+   ```bash
+   cp .env.example .env.local
+   ```
+
+4. **Configure Supabase**
+   - Create a Supabase project at [supabase.com](https://supabase.com)
+   - Add your project URL and anon key to `.env.local`
+
+5. **Start Development Server**
    ```bash
    npm run dev
    ```
 
-4. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+6. **Launch the Game**
+   Open [http://localhost:3000](http://localhost:3000) in your browser
 
-## Features
-
-- Interactive puzzle-solving gameplay
-- Character stats system
-- Multiple game scenarios
-- Responsive design
-
-## Project Structure
-
-```
-src
+## 📁 Project Structure
